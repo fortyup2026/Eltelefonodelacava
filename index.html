@@ -3,383 +3,375 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#05030b" />
+  <meta name="theme-color" content="#020611" />
   <title>Teléfono de la Cava</title>
 
   <style>
     :root{
-      --bg-1:#05030b;
-      --bg-2:#0b0a22;
-      --bg-3:#150c2a;
-      --panel:rgba(9,10,24,.42);
-      --line:rgba(255,255,255,.16);
-      --text:#f7f7fb;
-      --muted:rgba(255,255,255,.58);
-      --glow:rgba(255,255,255,.18);
+      --white:#f8fbff;
+      --muted:rgba(255,255,255,.72);
+      --line:rgba(205,228,255,.34);
+      --glass:rgba(2,7,18,.38);
+      --glass-pressed:rgba(120,180,255,.22);
     }
 
     *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:var(--bg-1);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    body{overflow:hidden}
+
+    html,body{
+      margin:0;
+      width:100%;
+      min-height:100%;
+      background:#020611;
+      color:var(--white);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    body{
+      overflow:hidden;
+      overscroll-behavior:none;
+    }
 
     .app{
       position:relative;
-      min-height:100svh;
       width:100%;
-      display:grid;
-      place-items:center;
+      height:100svh;
+      min-height:560px;
+      overflow:hidden;
       isolation:isolate;
-      background:
-        radial-gradient(circle at 18% 22%, rgba(110,65,180,.17), transparent 28%),
-        radial-gradient(circle at 77% 30%, rgba(28,82,145,.18), transparent 30%),
-        radial-gradient(circle at 62% 82%, rgba(143,32,92,.12), transparent 29%),
-        linear-gradient(160deg,var(--bg-1),var(--bg-2) 46%,var(--bg-3));
+      background:#020611;
     }
 
-    /* Nebulosa fija */
-    .nebula,
-    .nebula::before,
-    .nebula::after{
-      position:absolute;
-      inset:-8%;
-      content:"";
-      pointer-events:none;
-      z-index:-5;
-      filter:blur(30px);
-    }
-    .nebula{
-      background:
-        radial-gradient(ellipse at 22% 43%, rgba(157,96,255,.18), transparent 34%),
-        radial-gradient(ellipse at 72% 30%, rgba(60,144,255,.12), transparent 30%),
-        radial-gradient(ellipse at 61% 76%, rgba(255,91,163,.09), transparent 34%);
-    }
-    .nebula::before{
-      background:radial-gradient(ellipse at 35% 65%, rgba(91,193,255,.08), transparent 28%);
-    }
-    .nebula::after{
-      background:radial-gradient(ellipse at 82% 62%, rgba(255,120,88,.07), transparent 26%);
-    }
-
-    /* Estrellas de fondo estáticas */
-    .stars{
+    /* IMAGEN REAL DEL UNIVERSO, SIN BLUR */
+    .space-photo{
       position:absolute;
       inset:0;
-      z-index:-4;
+      z-index:-10;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-size:cover;
+      transform:scale(1.015);
+    }
+
+    /* Solo oscurece levemente el centro para que se lean los números.
+       No desenfoca nada. */
+    .space-shade{
+      position:absolute;
+      inset:0;
+      z-index:-8;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg, rgba(0,4,13,.26) 0%, rgba(0,4,13,.08) 24%, rgba(0,4,13,.10) 76%, rgba(0,4,13,.30) 100%),
+        radial-gradient(ellipse at center, rgba(0,4,13,.08) 0%, rgba(0,4,13,.04) 52%, rgba(0,0,0,.20) 100%);
+    }
+
+    /* Estrellas extra muy finas, para mantener profundidad aun cuando
+       la foto elegida tenga zonas más oscuras. */
+    .sharp-stars,
+    .sharp-stars::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-7;
       pointer-events:none;
       background-image:
-        radial-gradient(circle, rgba(255,255,255,.95) 0 1px, transparent 1.4px),
-        radial-gradient(circle, rgba(255,255,255,.62) 0 1px, transparent 1.3px),
-        radial-gradient(circle, rgba(165,190,255,.55) 0 1px, transparent 1.2px);
-      background-size:89px 89px, 137px 137px, 211px 211px;
-      background-position:3px 11px, 34px 58px, 92px 17px;
-      opacity:.68;
+        radial-gradient(circle, rgba(255,255,255,.98) 0 1px, transparent 1.35px),
+        radial-gradient(circle, rgba(205,226,255,.9) 0 1px, transparent 1.3px);
+      background-size:101px 101px, 173px 173px;
+      background-position:12px 21px, 71px 39px;
+      opacity:.44;
+    }
+    .sharp-stars::before{
+      inset:0;
+      background-size:227px 227px, 311px 311px;
+      background-position:33px 92px, 144px 18px;
+      opacity:.40;
     }
 
-    .vignette{
+    .event-layer{
       position:absolute;
       inset:0;
+      z-index:1;
+      overflow:hidden;
       pointer-events:none;
-      z-index:20;
-      box-shadow:inset 0 0 140px rgba(0,0,0,.7);
     }
 
-    .content{
-      width:min(92vw,560px);
+    .ui{
       position:relative;
       z-index:10;
-      padding:24px 16px 28px;
-      text-align:center;
+      height:100%;
+      width:min(100%,560px);
+      margin:0 auto;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        18px
+        max(16px, env(safe-area-inset-bottom));
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
     }
 
-    .eyebrow{
-      font-size:.72rem;
+    .top{
+      width:100%;
+      text-align:center;
+      margin-bottom:clamp(12px,2.2vh,22px);
+      text-shadow:0 2px 12px rgba(0,0,0,.82);
+    }
+
+    .kicker{
+      margin:0 0 7px;
+      font-size:clamp(.64rem,2.4vw,.82rem);
       letter-spacing:.34em;
       text-transform:uppercase;
-      color:var(--muted);
-      margin-bottom:10px;
+      color:rgba(255,255,255,.72);
+      font-weight:500;
     }
 
     h1{
-      margin:0 0 8px;
-      font-size:clamp(1.6rem,5vw,2.55rem);
-      font-weight:650;
-      letter-spacing:.08em;
+      margin:0;
+      font-size:clamp(1.72rem,7vw,2.8rem);
+      line-height:.98;
+      letter-spacing:.055em;
       text-transform:uppercase;
-      text-shadow:0 0 24px rgba(255,255,255,.08);
+      font-weight:760;
     }
 
-    .hint{
-      margin:0 auto 20px;
+    .subtitle{
+      margin:10px auto 0;
       max-width:420px;
-      color:rgba(255,255,255,.72);
-      font-size:.95rem;
-      letter-spacing:.05em;
+      font-size:clamp(.82rem,3.1vw,1rem);
+      line-height:1.35;
+      letter-spacing:.035em;
+      color:rgba(255,255,255,.77);
     }
 
-    .dial{
+    /* SIN panel borroso: los botones flotan sobre el universo */
+    .keypad{
+      width:min(82vw,390px);
       display:grid;
       grid-template-columns:repeat(3,1fr);
-      gap:14px;
-      width:min(100%,430px);
-      margin:0 auto;
-      padding:18px;
-      border:1px solid var(--line);
-      border-radius:30px;
-      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
-      backdrop-filter:blur(10px);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.05),
-        0 20px 50px rgba(0,0,0,.28);
+      gap:clamp(10px,2.3vw,16px);
+      align-items:center;
+      justify-items:center;
     }
 
     .key{
       appearance:none;
       -webkit-appearance:none;
-      border:1px solid rgba(255,255,255,.17);
-      background:
-        radial-gradient(circle at 35% 24%, rgba(255,255,255,.095), transparent 44%),
-        rgba(7,9,20,.44);
-      color:#fff;
+      width:clamp(68px,21vw,104px);
       aspect-ratio:1/1;
-      min-height:72px;
       border-radius:50%;
+      border:1px solid var(--line);
+      background:
+        radial-gradient(circle at 36% 26%, rgba(255,255,255,.08), transparent 42%),
+        var(--glass);
+      color:white;
+      font-size:clamp(2rem,8.2vw,3.15rem);
+      font-weight:280;
       display:grid;
       place-items:center;
-      font-size:clamp(2rem,9vw,3.3rem);
-      font-weight:300;
       cursor:pointer;
       user-select:none;
       -webkit-tap-highlight-color:transparent;
-      transition:transform .12s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease;
+      text-shadow:0 2px 10px rgba(0,0,0,.8);
       box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.025),
-        0 8px 22px rgba(0,0,0,.22);
-      text-shadow:0 0 16px rgba(255,255,255,.08);
+        inset 0 0 0 1px rgba(255,255,255,.035),
+        0 5px 18px rgba(0,0,0,.32);
+      transition:transform .11s ease,border-color .12s ease,background .12s ease,box-shadow .12s ease;
     }
 
     @media (hover:hover) and (pointer:fine){
       .key:hover{
         transform:translateY(-2px);
-        border-color:rgba(255,255,255,.36);
-        box-shadow:0 12px 30px rgba(0,0,0,.3),0 0 22px var(--glow);
+        border-color:rgba(225,240,255,.68);
+        box-shadow:0 9px 26px rgba(0,0,0,.38), inset 0 0 18px rgba(160,205,255,.08);
       }
     }
 
     .key:active,
     .key.pressed{
-      transform:scale(.94);
-      background:rgba(255,255,255,.16);
-      border-color:rgba(255,255,255,.65);
-      box-shadow:0 0 28px rgba(255,255,255,.17);
+      transform:scale(.92);
+      border-color:rgba(235,247,255,.94);
+      background:var(--glass-pressed);
+      box-shadow:0 0 0 3px rgba(180,220,255,.08),0 0 28px rgba(125,192,255,.25);
     }
 
     .zero{grid-column:2}
 
     .status{
-      min-height:24px;
-      margin-top:16px;
-      font-size:.78rem;
-      letter-spacing:.18em;
+      margin-top:clamp(12px,2.1vh,20px);
+      min-height:20px;
+      font-size:clamp(.66rem,2.5vw,.8rem);
+      letter-spacing:.24em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.52);
+      color:rgba(255,255,255,.68);
+      text-shadow:0 2px 10px rgba(0,0,0,.8);
     }
 
-    /* Objetos cósmicos */
-    .cosmic-layer{
+    /* ========== OBJETOS CÓSMICOS NÍTIDOS ========== */
+
+    .flyer{
       position:absolute;
-      inset:0;
-      overflow:hidden;
-      pointer-events:none;
-      z-index:2;
+      will-change:transform;
+      filter:none;
     }
 
-    .shooting-star{
-      position:absolute;
-      width:120px;
-      height:1px;
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,.95));
-      opacity:0;
-      transform:rotate(-18deg);
-      filter:drop-shadow(0 0 4px rgba(255,255,255,.75));
-      animation:shoot 1.35s ease-out forwards;
-    }
-
-    @keyframes shoot{
-      0%{opacity:0;transform:translate(-10vw,-6vh) rotate(-18deg) scaleX(.25)}
-      12%{opacity:1}
-      100%{opacity:0;transform:translate(115vw,42vh) rotate(-18deg) scaleX(1)}
+    .flyer svg{
+      display:block;
+      width:100%;
+      height:100%;
+      overflow:visible;
     }
 
     .astronaut{
-      position:absolute;
-      top:8%;
-      left:-120px;
-      width:74px;
-      height:74px;
-      opacity:.86;
-      animation:drift 17s linear forwards;
-      filter:drop-shadow(0 0 10px rgba(255,255,255,.18));
-    }
-    .astronaut::before{
-      content:"🧑‍🚀";
-      font-size:64px;
-      display:block;
-      transform:rotate(14deg);
+      top:6%;
+      left:-130px;
+      width:96px;
+      height:122px;
+      animation:astronautPass 18s linear forwards;
     }
 
-    @keyframes drift{
-      0%{transform:translateX(-12vw) translateY(0) rotate(-8deg)}
-      50%{transform:translateX(54vw) translateY(12px) rotate(8deg)}
-      100%{transform:translateX(120vw) translateY(-4px) rotate(20deg)}
+    @keyframes astronautPass{
+      0%{transform:translateX(-10vw) translateY(8px) rotate(-12deg)}
+      50%{transform:translateX(58vw) translateY(-8px) rotate(5deg)}
+      100%{transform:translateX(122vw) translateY(13px) rotate(17deg)}
     }
 
     .satellite{
-      position:absolute;
-      top:18%;
-      left:-120px;
-      font-size:54px;
-      opacity:.78;
+      top:13%;
+      left:-150px;
+      width:138px;
+      height:86px;
       animation:satellitePass 14s linear forwards;
-      filter:drop-shadow(0 0 8px rgba(140,190,255,.18));
     }
+
     @keyframes satellitePass{
-      from{transform:translateX(-12vw) rotate(-10deg)}
-      to{transform:translateX(120vw) rotate(10deg)}
+      0%{transform:translateX(-10vw) translateY(0) rotate(-7deg)}
+      100%{transform:translateX(125vw) translateY(28px) rotate(8deg)}
     }
 
-    .sun{
+    .planet-event{
       position:absolute;
-      width:170px;
-      height:170px;
+      width:min(48vw,270px);
+      aspect-ratio:1/1;
       border-radius:50%;
-      right:-65px;
-      top:7%;
-      background:radial-gradient(circle at 40% 40%,#fff8cc 0 10%,#ffc56c 25%,#ff7a35 58%,rgba(255,97,30,.2) 75%,transparent 76%);
-      box-shadow:0 0 55px rgba(255,143,62,.35),0 0 110px rgba(255,105,48,.18);
-      opacity:0;
-      animation:sunIn 12s ease-in-out forwards;
-    }
-    @keyframes sunIn{
-      0%{opacity:0;transform:scale(.75)}
-      18%,78%{opacity:.74;transform:scale(1)}
-      100%{opacity:0;transform:scale(1.06)}
-    }
-
-    .planet{
-      position:absolute;
-      width:145px;
-      height:145px;
-      border-radius:50%;
-      left:-48px;
-      bottom:7%;
+      right:-18%;
+      top:6%;
       background:
-        radial-gradient(circle at 30% 28%,rgba(255,255,255,.35),transparent 8%),
-        linear-gradient(145deg,#5a6888,#222844 48%,#101423);
-      box-shadow:inset -28px -28px 50px rgba(0,0,0,.6),0 0 40px rgba(90,110,170,.12);
-      opacity:0;
-      animation:planetIn 14s ease-in-out forwards;
-    }
-    .planet::after{
-      content:"";
-      position:absolute;
-      width:210px;
-      height:50px;
-      left:-34px;
-      top:48px;
-      border:5px solid rgba(207,221,255,.33);
-      border-radius:50%;
-      transform:rotate(-15deg);
-    }
-    @keyframes planetIn{
-      0%{opacity:0;transform:translateX(-28px) scale(.82)}
-      22%,78%{opacity:.72;transform:translateX(0) scale(1)}
-      100%{opacity:0;transform:translateX(-10px) scale(1.03)}
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.62) 0 2%, transparent 2.5%),
+        radial-gradient(circle at 38% 36%, #b59e7a 0 4%, #87755f 28%, #4a423d 57%, #171b26 76%);
+      box-shadow:
+        inset -38px -26px 48px rgba(0,0,0,.7),
+        0 0 0 1px rgba(255,255,255,.10);
+      animation:planetReveal 13s ease-in-out forwards;
     }
 
-    .supernova{
-      position:absolute;
-      left:74%;
-      top:18%;
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:#fff;
-      opacity:0;
-      animation:burst 5.5s ease-out forwards;
+    @keyframes planetReveal{
+      0%{opacity:0;transform:translateX(40px) scale(.86)}
+      18%,78%{opacity:.96;transform:translateX(0) scale(1)}
+      100%{opacity:0;transform:translateX(18px) scale(1.02)}
     }
-    @keyframes burst{
-      0%,18%{opacity:0;box-shadow:0 0 0 rgba(255,255,255,0);transform:scale(.2)}
-      25%{opacity:1;box-shadow:0 0 18px #fff,0 0 50px #c8d6ff,0 0 100px #805cff;transform:scale(2.2)}
-      42%{opacity:.9;box-shadow:0 0 25px #fff,0 0 80px #ffd2f0,0 0 150px #955cff;transform:scale(5)}
-      100%{opacity:0;box-shadow:0 0 0 rgba(255,255,255,0);transform:scale(8)}
+
+    .sun-event{
+      position:absolute;
+      width:min(42vw,240px);
+      aspect-ratio:1/1;
+      border-radius:50%;
+      left:-15%;
+      top:8%;
+      background:
+        radial-gradient(circle at 42% 40%, #fffde9 0 6%, #ffe296 17%, #ffb74e 41%, #f46b24 67%, #8b240f 100%);
+      box-shadow:
+        0 0 18px rgba(255,196,92,.58),
+        0 0 48px rgba(255,129,47,.30);
+      animation:sunReveal 11s ease-in-out forwards;
+    }
+
+    @keyframes sunReveal{
+      0%{opacity:0;transform:scale(.84)}
+      20%,76%{opacity:1;transform:scale(1)}
+      100%{opacity:0;transform:scale(1.04)}
     }
 
     .comet{
       position:absolute;
-      right:-100px;
-      top:30%;
-      width:18px;
-      height:18px;
-      border-radius:50%;
-      background:#e9f6ff;
-      box-shadow:0 0 20px rgba(200,230,255,.7);
-      animation:cometPass 9s ease-in-out forwards;
-      opacity:.9;
+      top:17%;
+      right:-180px;
+      width:190px;
+      height:80px;
+      animation:cometPass 7s ease-in forwards;
+      transform:rotate(-18deg);
     }
-    .comet::after{
-      content:"";
-      position:absolute;
-      width:160px;
-      height:5px;
-      right:10px;
-      top:7px;
-      background:linear-gradient(90deg,transparent,rgba(150,210,255,.05),rgba(225,245,255,.5));
-      filter:blur(2px);
-    }
+
     @keyframes cometPass{
-      from{transform:translate(10vw,-10vh) rotate(18deg)}
-      to{transform:translate(-130vw,58vh) rotate(18deg)}
+      from{transform:translate(5vw,-5vh) rotate(-18deg)}
+      to{transform:translate(-135vw,48vh) rotate(-18deg)}
     }
 
-    .flash{
+    .supernova{
       position:absolute;
-      inset:0;
-      background:rgba(255,255,255,.82);
+      top:13%;
+      left:69%;
+      width:120px;
+      height:120px;
+      transform:translate(-50%,-50%);
       opacity:0;
-      animation:flash .55s ease-out forwards;
-      pointer-events:none;
-      z-index:30;
-    }
-    @keyframes flash{
-      0%{opacity:0}
-      30%{opacity:.55}
-      100%{opacity:0}
+      animation:supernova 5.4s ease-out forwards;
     }
 
-    @media (max-width:420px){
-      .content{padding-inline:14px}
-      .dial{gap:12px;padding:14px;border-radius:26px}
-      .key{min-height:66px}
+    @keyframes supernova{
+      0%,22%{opacity:0;transform:translate(-50%,-50%) scale(.15)}
+      30%{opacity:1;transform:translate(-50%,-50%) scale(.55)}
+      45%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+      100%{opacity:0;transform:translate(-50%,-50%) scale(1.55)}
+    }
+
+    .meteor{
+      position:absolute;
+      width:150px;
+      height:2px;
+      background:linear-gradient(90deg,transparent 0%,rgba(210,235,255,.18) 42%,#fff 100%);
+      opacity:0;
+      animation:meteor 1.15s ease-out forwards;
+      transform:rotate(-24deg);
+    }
+
+    @keyframes meteor{
+      0%{opacity:0;transform:translate(-18vw,-10vh) rotate(-24deg) scaleX(.45)}
+      16%{opacity:1}
+      100%{opacity:0;transform:translate(118vw,43vh) rotate(-24deg) scaleX(1)}
+    }
+
+    @media (max-height:700px){
+      .ui{justify-content:flex-start;padding-top:14px}
+      .top{margin-bottom:10px}
+      .subtitle{margin-top:6px}
+      .keypad{gap:9px}
+      .key{width:min(19vw,84px)}
+      .status{margin-top:9px}
     }
 
     @media (prefers-reduced-motion:reduce){
-      *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important}
+      .flyer,.planet-event,.sun-event,.comet,.supernova,.meteor{display:none}
     }
   </style>
 </head>
 
 <body>
   <main class="app">
-    <div class="nebula"></div>
-    <div class="stars"></div>
-    <div id="cosmicLayer" class="cosmic-layer" aria-hidden="true"></div>
+    <div id="spacePhoto" class="space-photo" aria-hidden="true"></div>
+    <div class="space-shade" aria-hidden="true"></div>
+    <div class="sharp-stars" aria-hidden="true"></div>
+    <div id="eventLayer" class="event-layer" aria-hidden="true"></div>
 
-    <section class="content" aria-label="Selector musical">
-      <div class="eyebrow">Teléfono de la cava</div>
-      <h1>Marque una selección</h1>
-      <p class="hint">Elegí un número. Cada línea conecta con una playlist distinta.</p>
+    <section class="ui" aria-label="Selector de playlists">
+      <header class="top">
+        <p class="kicker">Teléfono de la cava</p>
+        <h1>Marque una selección</h1>
+        <p class="subtitle">Elegí un número. Cada línea conecta con una playlist distinta.</p>
+      </header>
 
-      <div class="dial" id="dial">
+      <div class="keypad" id="keypad">
         <button class="key" data-number="1" aria-label="Selección 1">1</button>
         <button class="key" data-number="2" aria-label="Selección 2">2</button>
         <button class="key" data-number="3" aria-label="Selección 3">3</button>
@@ -392,20 +384,16 @@
         <button class="key zero" data-number="0" aria-label="Selección 0">0</button>
       </div>
 
-      <div class="status" id="status" aria-live="polite">línea disponible</div>
+      <div id="status" class="status" aria-live="polite">línea disponible</div>
     </section>
-
-    <div class="vignette"></div>
   </main>
 
   <script>
-    /*
-      ==========================================================
-      PLAYLISTS
-      Reemplazá cada URL por la playlist de Spotify que quieras.
-      El 5 queda reservado para SebasWit.
-      ==========================================================
-    */
+    /* =========================================================
+       PLAYLISTS
+       Reemplazá estos enlaces por los tuyos.
+       5 queda reservado para SebasWit.
+       ========================================================= */
     const playlists = {
       "1": "https://open.spotify.com/playlist/PEGA_AQUI_PLAYLIST_1",
       "2": "https://open.spotify.com/playlist/PEGA_AQUI_PLAYLIST_2",
@@ -419,34 +407,67 @@
       "0": "https://open.spotify.com/playlist/PEGA_AQUI_PLAYLIST_0"
     };
 
-    const layer = document.getElementById("cosmicLayer");
+    /* =========================================================
+       FONDOS REALES NASA / JAMES WEBB
+       Cada carga elige uno al azar.
+       No hay blur ni filtro de desenfoque.
+       ========================================================= */
+    const spaceScenes = [
+      {
+        name: "Crab Nebula",
+        url: "https://assets.science.nasa.gov/dynamicimage/assets/science/missions/webb/science/2023/10/STScI-01HBBMF6GFYQG7ECGX1WD3W92B.png?crop=faces%2Cfocalpoint&fit=clip&h=1916&w=2200",
+        position: "50% 50%"
+      },
+      {
+        name: "NGC 604",
+        url: "https://assets.science.nasa.gov/dynamicimage/assets/science/missions/webb/science/2024/03/STScI-01HQNVF0HHRF5HH4HKH8S9C83X.png?crop=faces%2Cfocalpoint&fit=clip&h=1785&w=2200",
+        position: "52% 50%"
+      },
+      {
+        name: "Exposed Cranium Nebula",
+        url: "https://assets.science.nasa.gov/dynamicimage/assets/science/missions/webb/science/2026/02/STScI-01K843KG664WG1FD061J0AFCSH.jpg?crop=faces%2Cfocalpoint&fit=clip&h=1260&w=2450",
+        position: "16% 50%"
+      }
+    ];
+
+    const photo = document.getElementById("spacePhoto");
+    const eventLayer = document.getElementById("eventLayer");
     const statusEl = document.getElementById("status");
     const keys = [...document.querySelectorAll(".key")];
 
+    const scene = spaceScenes[Math.floor(Math.random() * spaceScenes.length)];
+    photo.style.backgroundImage = `url("${scene.url}")`;
+    photo.style.backgroundPosition = scene.position;
+
+    /* Precarga la siguiente imagen para que futuras visitas/cambios sean rápidos. */
+    spaceScenes.forEach(s => {
+      const img = new Image();
+      img.src = s.url;
+    });
+
     /* ---------- SONIDO "TIT" ---------- */
-    function beep() {
-      try {
+    function beep(){
+      try{
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         const ctx = new AudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
         osc.type = "sine";
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.012);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+        osc.frequency.setValueAtTime(920, ctx.currentTime);
+        gain.gain.setValueAtTime(.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(.20, ctx.currentTime + .01);
+        gain.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + .16);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.2);
-
+        osc.stop(ctx.currentTime + .17);
         osc.onended = () => ctx.close();
-      } catch (_) {}
+      }catch(e){}
     }
 
-    /* ---------- TECLADO ---------- */
+    /* ---------- BOTONES ---------- */
     keys.forEach(key => {
       key.addEventListener("click", () => {
         const n = key.dataset.number;
@@ -456,102 +477,189 @@
         key.classList.add("pressed");
         statusEl.textContent = `conectando selección ${n}`;
 
-        setTimeout(() => key.classList.remove("pressed"), 180);
+        setTimeout(() => key.classList.remove("pressed"), 170);
 
-        // Pequeña pausa para que se llegue a escuchar el "tit"
         setTimeout(() => {
-          if (!url || url.includes("PEGA_AQUI")) {
+          if(!url || url.includes("PEGA_AQUI")){
             statusEl.textContent = `falta cargar la playlist ${n}`;
             return;
           }
           window.location.href = url;
-        }, 340);
+        }, 280);
       });
     });
 
-    /* ---------- EVENTOS CÓSMICOS ---------- */
-    function addClass(name) {
+    /* =========================================================
+       OBJETOS NÍTIDOS
+       Son SVG/CSS, no emojis ampliados ni manchas borrosas.
+       ========================================================= */
+
+    function mount(html, className, lifetime){
       const el = document.createElement("div");
-      el.className = name;
-      layer.appendChild(el);
-      return el;
+      el.className = className;
+      el.innerHTML = html;
+      eventLayer.appendChild(el);
+      setTimeout(() => el.remove(), lifetime);
     }
 
-    function astronaut() {
-      const el = addClass("astronaut");
-      setTimeout(() => el.remove(), 18000);
+    function showAstronaut(){
+      mount(`
+        <svg viewBox="0 0 100 130" role="img" aria-label="Astronauta">
+          <defs>
+            <linearGradient id="suit" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffffff"/>
+              <stop offset=".55" stop-color="#cbd6df"/>
+              <stop offset="1" stop-color="#7e8b98"/>
+            </linearGradient>
+            <linearGradient id="visor" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffd08a"/>
+              <stop offset=".4" stop-color="#8a5b2d"/>
+              <stop offset="1" stop-color="#07111f"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="50" cy="28" rx="24" ry="25" fill="url(#suit)" stroke="#ffffff" stroke-width="2"/>
+          <ellipse cx="50" cy="29" rx="17" ry="16" fill="url(#visor)" stroke="#dcecff" stroke-width="1.5"/>
+          <rect x="27" y="49" width="46" height="48" rx="14" fill="url(#suit)" stroke="#f5fbff" stroke-width="2"/>
+          <rect x="39" y="58" width="23" height="15" rx="3" fill="#667482" stroke="#dfeaf2"/>
+          <path d="M30 58 L8 76 Q4 80 9 84 L34 72" fill="url(#suit)" stroke="#eef7ff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M70 58 L92 72 Q97 75 93 80 L66 72" fill="url(#suit)" stroke="#eef7ff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M40 94 L31 121" stroke="#dbe6ee" stroke-width="10" stroke-linecap="round"/>
+          <path d="M60 94 L70 120" stroke="#dbe6ee" stroke-width="10" stroke-linecap="round"/>
+          <rect x="21" y="53" width="8" height="35" rx="3" fill="#6d7883"/>
+          <circle cx="45" cy="64" r="2" fill="#ff5e5e"/>
+          <circle cx="51" cy="64" r="2" fill="#6ad9ff"/>
+        </svg>
+      `, "flyer astronaut", 19000);
     }
 
-    function satellite() {
-      const el = addClass("satellite");
-      el.textContent = "🛰️";
-      setTimeout(() => el.remove(), 15000);
+    function showSatellite(){
+      mount(`
+        <svg viewBox="0 0 160 100" role="img" aria-label="Satélite">
+          <defs>
+            <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#eef6ff"/>
+              <stop offset=".48" stop-color="#9aa8b6"/>
+              <stop offset="1" stop-color="#4b5662"/>
+            </linearGradient>
+            <linearGradient id="solar" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#204d88"/>
+              <stop offset="1" stop-color="#071f4a"/>
+            </linearGradient>
+          </defs>
+          <rect x="58" y="27" width="44" height="45" rx="5" fill="url(#metal)" stroke="#ffffff" stroke-width="1.5"/>
+          <circle cx="80" cy="49" r="10" fill="#172332" stroke="#dcefff"/>
+          <rect x="4" y="31" width="49" height="36" fill="url(#solar)" stroke="#9bc4ff"/>
+          <rect x="107" y="31" width="49" height="36" fill="url(#solar)" stroke="#9bc4ff"/>
+          <g stroke="#74a8e8" stroke-width="1">
+            <path d="M20 31v36M36 31v36M123 31v36M140 31v36"/>
+            <path d="M4 43h49M4 55h49M107 43h49M107 55h49"/>
+          </g>
+          <path d="M80 27 V11" stroke="#dcefff" stroke-width="2"/>
+          <circle cx="80" cy="9" r="3" fill="#ffffff"/>
+          <path d="M79 72 L66 92 M81 72 L95 92" stroke="#cdd9e4" stroke-width="2"/>
+        </svg>
+      `, "flyer satellite", 15000);
     }
 
-    function sun() {
-      const el = addClass("sun");
-      setTimeout(() => el.remove(), 13000);
+    function showComet(){
+      mount(`
+        <svg viewBox="0 0 220 90" role="img" aria-label="Cometa">
+          <defs>
+            <linearGradient id="tail" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="rgba(120,205,255,0)"/>
+              <stop offset=".68" stop-color="#8bd5ff" stop-opacity=".46"/>
+              <stop offset="1" stop-color="#f5fdff" stop-opacity=".95"/>
+            </linearGradient>
+            <radialGradient id="core">
+              <stop offset="0" stop-color="#ffffff"/>
+              <stop offset=".45" stop-color="#bfe8ff"/>
+              <stop offset="1" stop-color="#5599c5"/>
+            </radialGradient>
+          </defs>
+          <path d="M4 44 C65 31,130 35,193 44 C125 52,62 57,4 44Z" fill="url(#tail)"/>
+          <circle cx="199" cy="44" r="11" fill="url(#core)" stroke="#ffffff"/>
+          <path d="M202 35l6 7-5 8-8 3-7-7 3-9z" fill="#d9e8ef" opacity=".7"/>
+        </svg>
+      `, "comet", 8000);
     }
 
-    function planet() {
-      const el = addClass("planet");
-      setTimeout(() => el.remove(), 15000);
+    function showPlanet(){
+      const el = document.createElement("div");
+      el.className = "planet-event";
+      eventLayer.appendChild(el);
+      setTimeout(() => el.remove(), 14000);
     }
 
-    function supernova() {
-      const el = addClass("supernova");
-      setTimeout(() => {
-        const f = addClass("flash");
-        setTimeout(() => f.remove(), 700);
-      }, 1500);
-      setTimeout(() => el.remove(), 6000);
+    function showSun(){
+      const el = document.createElement("div");
+      el.className = "sun-event";
+      eventLayer.appendChild(el);
+      setTimeout(() => el.remove(), 12000);
     }
 
-    function comet() {
-      const el = addClass("comet");
-      setTimeout(() => el.remove(), 10000);
+    function showSupernova(){
+      mount(`
+        <svg viewBox="0 0 120 120" role="img" aria-label="Supernova">
+          <defs>
+            <radialGradient id="nova">
+              <stop offset="0" stop-color="#ffffff"/>
+              <stop offset=".18" stop-color="#fff4bd"/>
+              <stop offset=".45" stop-color="#ffbd67" stop-opacity=".95"/>
+              <stop offset=".72" stop-color="#9b72ff" stop-opacity=".44"/>
+              <stop offset="1" stop-color="#6f54ff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="60" cy="60" r="58" fill="url(#nova)"/>
+          <g stroke="#ffffff" stroke-linecap="round">
+            <path d="M60 3v114" stroke-width="2"/>
+            <path d="M3 60h114" stroke-width="2"/>
+            <path d="M19 19l82 82" stroke-width="1"/>
+            <path d="M101 19L19 101" stroke-width="1"/>
+          </g>
+          <circle cx="60" cy="60" r="7" fill="#ffffff"/>
+        </svg>
+      `, "supernova", 5900);
     }
 
-    function shootingStar() {
-      const el = addClass("shooting-star");
-      el.style.top = `${8 + Math.random() * 50}%`;
-      el.style.left = `${-18 + Math.random() * 10}%`;
-      setTimeout(() => el.remove(), 1600);
-    }
+    const mainEvents = [
+      showAstronaut,
+      showSatellite,
+      showComet,
+      showPlanet,
+      showSun,
+      showSupernova
+    ];
 
-    /*
-      Cada vez que abrís la web aparece una escena principal distinta.
-      Universo de fondo: fijo.
-      Evento: variable.
-    */
-    const mainScenes = [astronaut, satellite, sun, planet, supernova, comet];
-    const chosen = mainScenes[Math.floor(Math.random() * mainScenes.length)];
+    const firstEvent = mainEvents[Math.floor(Math.random() * mainEvents.length)];
+    setTimeout(firstEvent, 900 + Math.random() * 1200);
 
-    setTimeout(chosen, 900 + Math.random() * 1800);
-
-    /*
-      Estrellas fugaces ocasionales.
-      No son constantes para que el fondo siga sintiéndose quieto.
-    */
-    function scheduleShootingStar() {
-      const wait = 6500 + Math.random() * 11000;
-      setTimeout(() => {
-        shootingStar();
-        scheduleShootingStar();
-      }, wait);
-    }
-    scheduleShootingStar();
-
-    /*
-      Cada tanto puede pasar un segundo evento distinto durante una sesión larga.
-    */
+    /* Una segunda sorpresa, distinta, si la página queda abierta. */
     setTimeout(() => {
-      let another;
-      do {
-        another = mainScenes[Math.floor(Math.random() * mainScenes.length)];
-      } while (another === chosen);
-      another();
-    }, 18000 + Math.random() * 12000);
+      let second;
+      do{
+        second = mainEvents[Math.floor(Math.random() * mainEvents.length)];
+      }while(second === firstEvent);
+      second();
+    }, 14500 + Math.random() * 6500);
+
+    /* Estrellas fugaces ocasionales y NÍTIDAS. */
+    function meteor(){
+      const el = document.createElement("div");
+      el.className = "meteor";
+      el.style.top = `${7 + Math.random()*42}%`;
+      el.style.left = `${-22 + Math.random()*8}%`;
+      eventLayer.appendChild(el);
+      setTimeout(() => el.remove(), 1400);
+    }
+
+    function scheduleMeteor(){
+      setTimeout(() => {
+        meteor();
+        scheduleMeteor();
+      }, 6500 + Math.random()*9000);
+    }
+
+    scheduleMeteor();
   </script>
 </body>
 </html>
