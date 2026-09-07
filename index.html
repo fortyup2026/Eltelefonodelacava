@@ -9,9 +9,9 @@
   <style>
     :root{
       --text:#ffffff;
-      --muted:rgba(255,255,255,.74);
-      --line:rgba(220,235,255,.36);
-      --glass:rgba(2,7,18,.30);
+      --muted:rgba(255,255,255,.78);
+      --line:rgba(225,238,255,.34);
+      --glass:rgba(3,8,18,.30);
       --glass-pressed:rgba(126,178,255,.22);
     }
 
@@ -23,7 +23,7 @@
       min-height:100%;
       background:#02050d;
       color:var(--text);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     }
 
     body{
@@ -41,24 +41,25 @@
       background:#02050d;
     }
 
-    /* Fondo HD REAL, sin blur */
+    /* Fondo espacial real en HD */
     .space-bg{
       position:absolute;
       inset:0;
       z-index:-20;
-      background:center / cover no-repeat;
+      background-position:center;
+      background-size:cover;
+      background-repeat:no-repeat;
       transform:scale(1.01);
     }
 
-    /* Solo un sombreado leve para que el texto sea legible */
     .shade{
       position:absolute;
       inset:0;
       z-index:-18;
       pointer-events:none;
       background:
-        linear-gradient(180deg,rgba(0,2,8,.30) 0%,rgba(0,2,8,.08) 24%,rgba(0,2,8,.05) 67%,rgba(0,2,8,.20) 100%),
-        radial-gradient(ellipse at 50% 48%,rgba(0,0,0,.02),rgba(0,0,0,.14) 100%);
+        linear-gradient(180deg,rgba(0,2,8,.22),rgba(0,2,8,.03) 28%,rgba(0,2,8,.04) 72%,rgba(0,2,8,.18)),
+        radial-gradient(circle at center,transparent 48%,rgba(0,0,0,.18));
     }
 
     .event-layer{
@@ -89,7 +90,7 @@
       width:100%;
       text-align:center;
       margin-bottom:clamp(12px,2vh,20px);
-      text-shadow:0 2px 14px rgba(0,0,0,.85);
+      text-shadow:0 2px 12px rgba(0,0,0,.88);
     }
 
     .kicker{
@@ -146,9 +147,7 @@
       user-select:none;
       -webkit-tap-highlight-color:transparent;
       text-shadow:0 2px 10px rgba(0,0,0,.85);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.025),
-        0 6px 20px rgba(0,0,0,.28);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 6px 20px rgba(0,0,0,.28);
       transition:transform .10s ease,border-color .12s ease,background .12s ease,box-shadow .12s ease;
     }
 
@@ -157,6 +156,10 @@
       border-color:rgba(255,255,255,.92);
       background:var(--glass-pressed);
       box-shadow:0 0 0 3px rgba(165,210,255,.08),0 0 28px rgba(135,190,255,.28);
+    }
+
+    .key.empty{
+      opacity:.82;
     }
 
     .zero{grid-column:2}
@@ -172,126 +175,164 @@
       text-align:center;
     }
 
-    /* ===============================
-       EVENTOS FOTOGRÁFICOS / REALES
-       Sin círculos CSS ni muñequitos SVG
-       =============================== */
+    /* ======================================================
+       OBJETOS PIXEL / BLOQUE
+       Estilo videojuego blocky, sin fotos pegadas.
+       ====================================================== */
 
-    .photo-event{
+    .pixel-object{
       position:absolute;
-      pointer-events:none;
-      user-select:none;
-      -webkit-user-drag:none;
-      will-change:transform,opacity;
+      image-rendering:pixelated;
+      will-change:transform;
+      filter:drop-shadow(0 8px 14px rgba(0,0,0,.45));
     }
 
-    /* El negro original de las fotos desaparece visualmente sobre el universo */
-    .screen-photo{
-      mix-blend-mode:screen;
+    /* Astronauta pixelado */
+    .px-astro{
+      top:7%;
+      left:-130px;
+      width:86px;
+      height:116px;
+      animation:astroPass 17s linear forwards;
+    }
+    .px-astro .helmet{
+      position:absolute;left:24px;top:0;width:40px;height:34px;
+      background:#e8eef4;border:5px solid #9daab5;
+      box-shadow:inset 0 0 0 5px #223447;
+    }
+    .px-astro .body{
+      position:absolute;left:20px;top:34px;width:48px;height:50px;
+      background:#e3e8ec;border:5px solid #9daab5;
+    }
+    .px-astro .pack{
+      position:absolute;left:10px;top:38px;width:18px;height:40px;
+      background:#6c7884;
+    }
+    .px-astro .arm1,.px-astro .arm2{
+      position:absolute;top:42px;width:13px;height:48px;background:#dce3e8;
+      border:4px solid #9daab5;
+    }
+    .px-astro .arm1{left:4px;transform:rotate(32deg);transform-origin:top}
+    .px-astro .arm2{right:4px;transform:rotate(-28deg);transform-origin:top}
+    .px-astro .leg1,.px-astro .leg2{
+      position:absolute;top:81px;width:17px;height:34px;background:#dfe5e9;
+      border:4px solid #9daab5;
+    }
+    .px-astro .leg1{left:23px;transform:rotate(10deg)}
+    .px-astro .leg2{right:18px;transform:rotate(-11deg)}
+    .px-astro .panel{
+      position:absolute;left:31px;top:50px;width:25px;height:16px;
+      background:#54616d;border:3px solid #aeb9c2;
+    }
+    .px-astro .light{
+      position:absolute;width:4px;height:4px;background:#ff6a6a;left:36px;top:56px;
+      box-shadow:8px 0 0 #67d5ff;
     }
 
-    /* Astronauta real: foto NASA recortada, no un dibujo */
-    .astronaut-wrap{
-      top:4%;
-      left:-220px;
-      width:190px;
-      height:225px;
-      overflow:hidden;
-      animation:astronautPass 18s linear forwards;
-      opacity:.92;
+    @keyframes astroPass{
+      0%{transform:translateX(-12vw) translateY(0) rotate(-10deg)}
+      50%{transform:translateX(58vw) translateY(10px) rotate(4deg)}
+      100%{transform:translateX(125vw) translateY(-5px) rotate(15deg)}
     }
 
-    .astronaut-wrap img{
-      position:absolute;
-      width:325px;
-      max-width:none;
-      left:-49px;
-      top:-79px;
-      mix-blend-mode:screen;
+    /* Satélite pixelado */
+    .px-sat{
+      top:11%;
+      left:-160px;
+      width:130px;
+      height:72px;
+      animation:satPass 14s linear forwards;
+    }
+    .px-sat .core{
+      position:absolute;left:46px;top:20px;width:38px;height:32px;
+      background:#bcc7cf;border:4px solid #66727c;
+    }
+    .px-sat .dish{
+      position:absolute;left:52px;top:2px;width:24px;height:17px;
+      background:#e1e7eb;border:4px solid #8996a0;
+      clip-path:polygon(0 0,100% 0,76% 100%,24% 100%);
+    }
+    .px-sat .wing1,.px-sat .wing2{
+      position:absolute;top:22px;width:40px;height:28px;
+      background:
+        linear-gradient(90deg,transparent 31%,rgba(255,255,255,.18) 31% 35%,transparent 35% 65%,rgba(255,255,255,.18) 65% 69%,transparent 69%),
+        linear-gradient(#123c70 48%,#0a2a56 48%);
+      border:3px solid #79a9d7;
+    }
+    .px-sat .wing1{left:0}
+    .px-sat .wing2{right:0}
+
+    @keyframes satPass{
+      from{transform:translateX(-12vw) rotate(-8deg)}
+      to{transform:translateX(128vw) translateY(32px) rotate(9deg)}
     }
 
-    @keyframes astronautPass{
-      0%{transform:translateX(-8vw) translateY(0) rotate(-7deg)}
-      48%{transform:translateX(61vw) translateY(10px) rotate(4deg)}
-      100%{transform:translateX(128vw) translateY(-8px) rotate(14deg)}
+    /* Asteroide bloque */
+    .px-rock{
+      top:12%;
+      right:-120px;
+      width:90px;height:76px;
+      animation:rockPass 11s linear forwards;
+    }
+    .px-rock .b1,.px-rock .b2,.px-rock .b3,.px-rock .b4,.px-rock .b5{
+      position:absolute;background:#514b46;
+      box-shadow:inset -8px -8px 0 rgba(0,0,0,.22),inset 6px 6px 0 rgba(255,255,255,.05);
+    }
+    .px-rock .b1{left:18px;top:8px;width:50px;height:48px}
+    .px-rock .b2{left:5px;top:22px;width:26px;height:28px}
+    .px-rock .b3{right:5px;top:18px;width:24px;height:30px}
+    .px-rock .b4{left:28px;bottom:2px;width:34px;height:24px}
+    .px-rock .b5{left:35px;top:20px;width:14px;height:11px;background:#2c2927}
+
+    @keyframes rockPass{
+      0%{transform:translate(10vw,-5vh) rotate(0deg) scale(.8)}
+      100%{transform:translate(-135vw,55vh) rotate(300deg) scale(1.05)}
     }
 
-    /* Telescopio/sonda real con PNG transparente NASA */
-    .satellite-real{
-      top:8%;
-      left:-240px;
-      width:215px;
-      animation:satellitePass 15s linear forwards;
-      opacity:.94;
-    }
-
-    .satellite-real img{
-      display:block;
-      width:100%;
-      filter:drop-shadow(0 4px 10px rgba(0,0,0,.42));
-    }
-
-    @keyframes satellitePass{
-      0%{transform:translateX(-12vw) rotate(-8deg)}
-      100%{transform:translateX(132vw) translateY(42px) rotate(10deg)}
-    }
-
-    /* Planetas reales de Hubble */
-    .planet-real{
-      top:4%;
-      right:-210px;
-      width:min(62vw,330px);
-      animation:planetVisit 13s ease-in-out forwards;
+    /* Planeta pixelado */
+    .px-planet{
+      top:6%;
+      right:-95px;
+      width:180px;height:180px;
+      border-radius:50%;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          #7b6b55 0 14px,
+          #9c8665 14px 26px,
+          #51483d 26px 38px,
+          #7f715c 38px 50px
+        );
+      box-shadow:
+        inset -42px -28px 0 rgba(0,0,0,.35),
+        0 0 0 6px rgba(255,255,255,.04);
+      animation:planetPeek 12s ease-in-out forwards;
       opacity:0;
     }
-
-    .planet-real.left{
-      right:auto;
-      left:-210px;
+    .px-planet::after{
+      content:"";
+      position:absolute;inset:0;border-radius:50%;
+      background:
+        linear-gradient(90deg,transparent 40%,rgba(0,0,0,.22) 40% 45%,transparent 45%),
+        linear-gradient(transparent 32%,rgba(255,255,255,.05) 32% 37%,transparent 37%);
+      mix-blend-mode:overlay;
     }
 
-    .planet-real img{
-      width:100%;
-      display:block;
-      filter:drop-shadow(0 8px 18px rgba(0,0,0,.30));
+    @keyframes planetPeek{
+      0%{opacity:0;transform:translateX(45px) scale(.88)}
+      18%,78%{opacity:.94;transform:translateX(0) scale(1)}
+      100%{opacity:0;transform:translateX(20px) scale(1.03)}
     }
 
-    @keyframes planetVisit{
-      0%{opacity:0;transform:translateX(35px) scale(.88)}
-      18%,78%{opacity:.92;transform:translateX(0) scale(1)}
-      100%{opacity:0;transform:translateX(18px) scale(1.02)}
-    }
-
-    /* Asteroide Bennu real */
-    .asteroid-real{
-      top:10%;
-      right:-170px;
-      width:145px;
-      animation:asteroidPass 12s linear forwards;
-      opacity:.9;
-    }
-
-    .asteroid-real img{
-      display:block;
-      width:100%;
-      filter:contrast(1.08) drop-shadow(0 6px 12px rgba(0,0,0,.36));
-    }
-
-    @keyframes asteroidPass{
-      0%{transform:translate(12vw,-4vh) rotate(0deg) scale(.78)}
-      100%{transform:translate(-138vw,56vh) rotate(290deg) scale(1.08)}
-    }
-
-    /* Estrella fugaz: fina y breve, como corresponde */
+    /* Estrella fugaz */
     .meteor{
       position:absolute;
-      width:145px;
+      width:150px;
       height:2px;
       opacity:0;
-      background:linear-gradient(90deg,transparent,rgba(210,235,255,.18) 38%,rgba(255,255,255,.98));
+      background:linear-gradient(90deg,transparent,rgba(210,235,255,.18) 40%,#fff);
       transform:rotate(-23deg);
       animation:meteorPass 1.1s ease-out forwards;
-      box-shadow:8px 0 7px rgba(210,235,255,.18);
     }
 
     @keyframes meteorPass{
@@ -310,7 +351,7 @@
     }
 
     @media(prefers-reduced-motion:reduce){
-      .photo-event,.meteor{display:none!important}
+      .pixel-object,.meteor{display:none!important}
     }
   </style>
 </head>
@@ -330,15 +371,15 @@
 
       <div class="keypad">
         <button class="key" data-number="1">1</button>
-        <button class="key" data-number="2">2</button>
+        <button class="key empty" data-number="2">2</button>
         <button class="key" data-number="3">3</button>
         <button class="key" data-number="4">4</button>
         <button class="key" data-number="5">5</button>
         <button class="key" data-number="6">6</button>
         <button class="key" data-number="7">7</button>
         <button class="key" data-number="8">8</button>
-        <button class="key" data-number="9">9</button>
-        <button class="key zero" data-number="0">0</button>
+        <button class="key empty" data-number="9">9</button>
+        <button class="key zero empty" data-number="0">0</button>
       </div>
 
       <div id="status" class="status" aria-live="polite">línea disponible</div>
@@ -348,19 +389,16 @@
   <script>
     /* ============================================================
        PLAYLISTS
-       2 queda "próximamente".
-       9 = sorpresa aleatoria.
-       0 = aleatorio entre todas las playlists ya cargadas.
+       Dejamos VACÍOS los botones que todavía no definiste: 2, 9 y 0.
        ============================================================ */
-
     const selections = {
       "1": {
         name: "Para empezar",
         url: "https://open.spotify.com/playlist/16QguuMuZbadn8Ll3exMpS"
       },
       "2": {
-        name: "Copa de noche",
-        url: null
+        name: "",
+        url: ""
       },
       "3": {
         name: "Música disco",
@@ -385,21 +423,20 @@
       "8": {
         name: "Lentos",
         url: "https://open.spotify.com/playlist/0Fhptdnst41dPQG1FXgLog"
+      },
+      "9": {
+        name: "",
+        url: ""
+      },
+      "0": {
+        name: "",
+        url: ""
       }
     };
 
-    const surprisePool = ["3","4","6","7"];
-    const allAvailable = ["1","3","4","5","6","7","8"];
-
-    const statusEl = document.getElementById("status");
-    const eventLayer = document.getElementById("eventLayer");
-    const keys = [...document.querySelectorAll(".key")];
-
     /* ============================================================
-       FONDOS NASA / WEBB EN HD
-       Elegimos uno distinto al cargar.
+       FONDOS WEBB / NASA HD
        ============================================================ */
-
     const backgrounds = [
       "https://assets.science.nasa.gov/dynamicimage/assets/science/missions/webb/science/2023/10/STScI-01HBBMF6GFYQG7ECGX1WD3W92B.png?crop=faces%2Cfocalpoint&fit=clip&h=1916&w=2200",
       "https://assets.science.nasa.gov/dynamicimage/assets/science/missions/webb/science/2024/03/STScI-01HQNVF0HHRF5HH4HKH8S9C83X.png?crop=faces%2Cfocalpoint&fit=clip&h=1785&w=2200",
@@ -409,10 +446,11 @@
     document.getElementById("spaceBg").style.backgroundImage =
       `url("${backgrounds[Math.floor(Math.random()*backgrounds.length)]}")`;
 
-    /* ============================================================
-       AUDIO "TIT"
-       ============================================================ */
+    const statusEl = document.getElementById("status");
+    const eventLayer = document.getElementById("eventLayer");
+    const keys = [...document.querySelectorAll(".key")];
 
+    /* SONIDO TIT */
     function beep(){
       try{
         const AC = window.AudioContext || window.webkitAudioContext;
@@ -430,149 +468,116 @@
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime+.16);
-        osc.onended = () => ctx.close();
+        osc.onended = ()=>ctx.close();
       }catch(e){}
     }
 
-    function pressFx(btn){
-      btn.classList.add("pressed");
-      setTimeout(()=>btn.classList.remove("pressed"),170);
-    }
-
-    function goToSelection(key, prefix="conectando"){
-      const item = selections[key];
-      if(!item || !item.url) return;
-
-      statusEl.textContent = `${prefix} · ${item.name}`;
-
-      setTimeout(()=>{
-        window.location.href = item.url;
-      },320);
-    }
-
+    /* ============================================================
+       IMPORTANTE:
+       Abrir una URL de Spotify NO permite forzar "shuffle" ni
+       autorreproducción desde una web estática.
+       Eso lo haremos después con Spotify Web API + tu cuenta Premium.
+       ============================================================ */
     keys.forEach(btn=>{
       btn.addEventListener("click",()=>{
         const n = btn.dataset.number;
+        const item = selections[n];
+
         beep();
-        pressFx(btn);
+        btn.classList.add("pressed");
+        setTimeout(()=>btn.classList.remove("pressed"),170);
 
-        if(n === "2"){
-          statusEl.textContent = "copa de noche · próximamente";
+        if(!item || !item.url){
+          statusEl.textContent = "línea disponible";
           return;
         }
 
-        if(n === "9"){
-          const randomKey = surprisePool[Math.floor(Math.random()*surprisePool.length)];
-          goToSelection(randomKey,"sorpresa");
-          return;
-        }
+        statusEl.textContent = `conectando · ${item.name}`;
 
-        if(n === "0"){
-          let last = sessionStorage.getItem("cavaLastRandom");
-          let choices = allAvailable.filter(k=>k!==last);
-          const randomKey = choices[Math.floor(Math.random()*choices.length)];
-          sessionStorage.setItem("cavaLastRandom",randomKey);
-          goToSelection(randomKey,"aleatorio");
-          return;
-        }
-
-        goToSelection(n);
+        setTimeout(()=>{
+          window.location.href = item.url;
+        },300);
       });
     });
 
     /* ============================================================
-       EVENTOS: USAMOS IMÁGENES REALES
+       EVENTOS VISUALES BLOCKY
        ============================================================ */
-
-    const ASSETS = {
-      astronaut:
-        "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/lunar-science/2023/09/as09-20-3094_orig.jpg?crop=faces%2Cfocalpoint&fit=clip&h=4095&w=4095",
-
-      telescope:
-        "https://science.nasa.gov/wp-content/uploads/2023/05/webb_1.png",
-
-      jupiter:
-        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jupiter%20%28transparent%29.png",
-
-      saturn:
-        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Saturn%20from%20Hubble.png",
-
-      bennu:
-        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bennu_mosaic_OSIRIS-REx_%28square%29.png"
-    };
-
-    function removeLater(el,ms){
-      setTimeout(()=>el.remove(),ms);
+    function add(html,cls,life){
+      const el = document.createElement("div");
+      el.className = "pixel-object " + cls;
+      el.innerHTML = html;
+      eventLayer.appendChild(el);
+      setTimeout(()=>el.remove(),life);
     }
 
     function astronaut(){
-      const wrap = document.createElement("div");
-      wrap.className = "photo-event astronaut-wrap";
-      wrap.innerHTML = `<img src="${ASSETS.astronaut}" alt="">`;
-      eventLayer.appendChild(wrap);
-      removeLater(wrap,19000);
+      add(`
+        <div class="helmet"></div>
+        <div class="pack"></div>
+        <div class="body"></div>
+        <div class="arm1"></div>
+        <div class="arm2"></div>
+        <div class="leg1"></div>
+        <div class="leg2"></div>
+        <div class="panel"></div>
+        <div class="light"></div>
+      `,"px-astro",18000);
     }
 
     function satellite(){
-      const wrap = document.createElement("div");
-      wrap.className = "photo-event satellite-real";
-      wrap.innerHTML = `<img src="${ASSETS.telescope}" alt="">`;
-      eventLayer.appendChild(wrap);
-      removeLater(wrap,16000);
-    }
-
-    function planet(type){
-      const wrap = document.createElement("div");
-      const left = Math.random()>.5 ? " left" : "";
-      wrap.className = "photo-event planet-real"+left;
-      wrap.innerHTML = `<img src="${ASSETS[type]}" alt="">`;
-      eventLayer.appendChild(wrap);
-      removeLater(wrap,14000);
+      add(`
+        <div class="wing1"></div>
+        <div class="wing2"></div>
+        <div class="core"></div>
+        <div class="dish"></div>
+      `,"px-sat",15000);
     }
 
     function asteroid(){
-      const wrap = document.createElement("div");
-      wrap.className = "photo-event asteroid-real";
-      wrap.innerHTML = `<img src="${ASSETS.bennu}" alt="">`;
-      eventLayer.appendChild(wrap);
-      removeLater(wrap,13000);
+      add(`
+        <div class="b1"></div>
+        <div class="b2"></div>
+        <div class="b3"></div>
+        <div class="b4"></div>
+        <div class="b5"></div>
+      `,"px-rock",12000);
+    }
+
+    function planet(){
+      const el = document.createElement("div");
+      el.className = "pixel-object px-planet";
+      eventLayer.appendChild(el);
+      setTimeout(()=>el.remove(),13000);
     }
 
     function meteor(){
       const el = document.createElement("div");
       el.className = "meteor";
-      el.style.top = `${7+Math.random()*39}%`;
-      el.style.left = `${-24+Math.random()*8}%`;
+      el.style.top = `${8 + Math.random()*38}%`;
+      el.style.left = `${-24 + Math.random()*8}%`;
       eventLayer.appendChild(el);
-      removeLater(el,1400);
+      setTimeout(()=>el.remove(),1400);
     }
 
-    const mainEvents = [
-      astronaut,
-      satellite,
-      ()=>planet("jupiter"),
-      ()=>planet("saturn"),
-      asteroid
-    ];
+    const events = [astronaut,satellite,asteroid,planet];
 
-    const firstIndex = Math.floor(Math.random()*mainEvents.length);
-    setTimeout(mainEvents[firstIndex],1000+Math.random()*1300);
+    const first = events[Math.floor(Math.random()*events.length)];
+    setTimeout(first,1000 + Math.random()*1200);
 
-    /* Segundo evento distinto si la persona se queda mirando */
     setTimeout(()=>{
-      let secondIndex;
+      let second;
       do{
-        secondIndex = Math.floor(Math.random()*mainEvents.length);
-      }while(secondIndex===firstIndex);
-      mainEvents[secondIndex]();
-    },15000+Math.random()*5500);
+        second = events[Math.floor(Math.random()*events.length)];
+      }while(second === first);
+      second();
+    },15000 + Math.random()*6000);
 
-    /* Estrella fugaz muy ocasional */
     function scheduleMeteor(){
       setTimeout(()=>{
         meteor();
         scheduleMeteor();
-      },7000+Math.random()*10500);
+      },7000 + Math.random()*10000);
     }
     scheduleMeteor();
   </script>
